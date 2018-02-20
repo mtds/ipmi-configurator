@@ -32,6 +32,10 @@ def pef_config(sensor_data):
    subprocess.call(shlex.split("/usr/sbin/pef-config --commit -e "+eventFilter_string+":Enable_Filter=yes"))
    subprocess.call(shlex.split("/usr/sbin/pef-config --commit -e "+eventFilter_string+":Sensor_Number="+sensorNumber))
 
+# Do not execute unless root:
+if not os.geteuid() == 0:
+   sys.exit("\nOnly root can run this script\n")
+
 parser = SafeConfigParser()
 parser.read('ipmi_sensors.ini')
 
