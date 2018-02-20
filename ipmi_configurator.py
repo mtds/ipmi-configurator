@@ -1,12 +1,20 @@
 #!/usr/bin/env python
 
-# Ref: https://pymotw.com/2/ConfigParser/
+# IPMI Configurator
+
+#
+# Read from a INI config file a list of machines HW type, followed by records in this form:
+# sensor_NUM="EventFilter, Sensor Number, SensorID, Upper Non-Critical Threshold, Upper Critical Threshold"
+#
+# 1. Iterate through the [sections] of the INI file.
+# 2. Is there a product name correspondance in the config file?
+# 3. If yes then proceed further to parser the data for the sensor 
+#    and create a PEF event.
 
 import shlex
 import subprocess
 from ConfigParser import SafeConfigParser
 
-# EventFilter, Sensor Number, SensorID, Upper Non-Critical Threshold, Upper Critical Threshold
 def pef_config(sensor_data):
    eventFilter, sensorNumber, sensorID, upNcTh, upCrTh = sensor_data.split(",")
 
@@ -26,11 +34,6 @@ def pef_config(sensor_data):
 
 parser = SafeConfigParser()
 parser.read('ipmi_sensors.ini')
-
-# 1. Iterate through the [sections] of the INI file.
-# 2. Is there a product name correspondance in the config file?
-# 3. If yes then proceed to parser the data for the sensor and
-#    create a PEF event.
 
 for section_name in parser.sections():
     system_name = subprocess.check_output(['/usr/sbin/dmidecode','-s', 'system-product-name'])
