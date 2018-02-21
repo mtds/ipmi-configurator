@@ -11,10 +11,15 @@
 # 3. If yes then proceed further to parser the data for the sensor 
 #    and create a PEF event.
 
+import getopt
+import os
 import shlex
 import subprocess
+import sys
 from ConfigParser import SafeConfigParser
 
+
+# EventFilter, Sensor Number, SensorID, Upper Non-Critical Threshold, Upper Critical Threshold
 def pef_config(sensor_data):
    eventFilter, sensorNumber, sensorID, upNcTh, upCrTh = sensor_data.split(",")
 
@@ -32,16 +37,38 @@ def pef_config(sensor_data):
    subprocess.call(shlex.split("/usr/sbin/pef-config --commit -e "+eventFilter_string+":Enable_Filter=yes"))
    subprocess.call(shlex.split("/usr/sbin/pef-config --commit -e "+eventFilter_string+":Sensor_Number="+sensorNumber))
 
-# Do not execute unless root:
-if not os.geteuid() == 0:
-   sys.exit("\nOnly root can run this script\n")
 
-parser = SafeConfigParser()
-parser.read('ipmi_sensors.ini')
+def main(argv):
 
-for section_name in parser.sections():
-    system_name = subprocess.check_output(['/usr/sbin/dmidecode','-s', 'system-product-name'])
-    if system_name.rstrip('\n') in section_name:
-        for name, value in parser.items(section_name):
-            pef_config(value)
+   if not os.geteuid() == 0:
+       sys.exit("\nOnly root can run this script\n")
+
+   # Initizialize the parser:
+   parser = SafeConfigParser()
+
+   # Config filename (hardcoded in case no config file is provided on the cmd line):
+   config_file = 'ipmi_sensors.ini'
+
+   # The script will accept only two options:
+   # -h print (generic help msg)
+   # -f config_file (a config file in INI format)
+
+   opts, args = getopt.getopt(argv,"hf::")
+   for opt, arg in opts:
+      if opt == '-h':
+         print sys.argv[0] + ' -f <cfgfile>'
+         sys.exit()
+      elif opt in ("-f"):
+         config_file = arg
+
+   parser.read(config_file)
+
+   for section_name in parser.sections():
+       system_name = subprocess.check_output(['/usr/sbin/dmidecode','-s', 'system-product-name'])
+       if system_name.rstrip('\n') in section_name:
+           for name, value in parser.items(section_name):
+              pef_config(value)
+
+if __name__ == "__main__":
+   main(sys.argv[1:])
 
