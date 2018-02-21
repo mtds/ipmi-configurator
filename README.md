@@ -22,7 +22,7 @@ It's based on the *INI* format:
 
 ```
 [system-product-name]
-sensor1="16,1,4_System_Temp,55,58"
+sensor1=16,1,4_System_Temp,55,58
 ```
 
 The fields have the following meaning:
