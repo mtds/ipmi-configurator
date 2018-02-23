@@ -25,20 +25,24 @@ def pef_config(sensor_data):
 
    # Light sanity check:
    if eventFilter.isdigit() and upNcTh.isdigit() and upCrTh.isdigit() and sensorNumber.isdigit():
+   
+      # Get the PEF list and verify if we have already defined an alert for the sensor in question:
+      pef_list = subprocess.check_output(['/usr/bin/ipmitool','pef','filter', 'list'])
+      if sensorNumber not in pef_list:
  
-      # Set IPMI non-critical/critical thresholds:
-      subprocess.call(shlex.split("/usr/sbin/ipmi-sensors-config --commit -e "+sensorID+":Upper_Non_Critical_Threshold="+upNcTh))
-      subprocess.call(shlex.split("/usr/sbin/ipmi-sensors-config --commit -e "+sensorID+":Upper_Critical_Threshold="+upCrTh))
+         # Set IPMI non-critical/critical thresholds:
+         subprocess.call(shlex.split("/usr/sbin/ipmi-sensors-config --commit -e "+sensorID+":Upper_Non_Critical_Threshold="+upNcTh))
+         subprocess.call(shlex.split("/usr/sbin/ipmi-sensors-config --commit -e "+sensorID+":Upper_Critical_Threshold="+upCrTh))
 
-      # Build the event filter string:
-      eventFilter_string = "Event_Filter_"+eventFilter
+         # Build the event filter string:
+         eventFilter_string = "Event_Filter_"+eventFilter
 
-      # Setup IPMI PEF:
-      subprocess.call(shlex.split("/usr/sbin/pef-config --commit -e "+eventFilter_string+":Sensor_Type=Temperature"))
-      subprocess.call(shlex.split("/usr/sbin/pef-config --commit -e "+eventFilter_string+":Event_Severity=Critical"))
-      subprocess.call(shlex.split("/usr/sbin/pef-config --commit -e "+eventFilter_string+":Event_Filter_Action_Power_Off=yes"))
-      subprocess.call(shlex.split("/usr/sbin/pef-config --commit -e "+eventFilter_string+":Enable_Filter=yes"))
-      subprocess.call(shlex.split("/usr/sbin/pef-config --commit -e "+eventFilter_string+":Sensor_Number="+sensorNumber))
+         # Setup IPMI PEF:
+         subprocess.call(shlex.split("/usr/sbin/pef-config --commit -e "+eventFilter_string+":Sensor_Type=Temperature"))
+         subprocess.call(shlex.split("/usr/sbin/pef-config --commit -e "+eventFilter_string+":Event_Severity=Critical"))
+         subprocess.call(shlex.split("/usr/sbin/pef-config --commit -e "+eventFilter_string+":Event_Filter_Action_Power_Off=yes"))
+         subprocess.call(shlex.split("/usr/sbin/pef-config --commit -e "+eventFilter_string+":Enable_Filter=yes"))
+         subprocess.call(shlex.split("/usr/sbin/pef-config --commit -e "+eventFilter_string+":Sensor_Number="+sensorNumber))
    else:
       print "WARNING: Check your temperature thresholds or the sensor/event filter number --> they cannot be in alphanumerical format!!"
 
