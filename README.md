@@ -39,6 +39,12 @@ The fields have the following meaning:
   - ipmitool
   - freeipmi
 
+## Build an RPM
+
+``rpmbuild ipmi-configurator.spec``
+
+[Setup an environment to build RPMs (CentOS Wiki)](https://wiki.centos.org/HowTos/SetupRpmBuildEnvironment)
+
 ## References
 
 * [IPMI on Wikipedia](https://en.wikipedia.org/wiki/Intelligent_Platform_Management_Interface)
