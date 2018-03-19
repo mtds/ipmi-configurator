@@ -1,0 +1,8 @@
+[Unit]
+Description=IPMI Configurator
+After=multi-user.target
+[Service]
+Type=oneshot
+ExecStart=/usr/bin/python /usr/bin/ipmi_configurator.py
+[Install]
+WantedBy=multi-user.target
