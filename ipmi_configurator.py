@@ -27,7 +27,7 @@ def pef_config(sensor_data):
    if eventFilter.isdigit() and upNcTh.isdigit() and upCrTh.isdigit() and sensorNumber.isdigit():
    
       # Get the PEF list and verify if we have already defined an alert for the sensor in question:
-      pef_list = subprocess.check_output(['/usr/bin/ipmitool','pef','filter', 'list'])
+      pef_list = subprocess.check_output(['/usr/bin/ipmitool','pef','list'])
       if sensorNumber not in pef_list:
  
          # Set IPMI non-critical/critical thresholds:
