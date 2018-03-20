@@ -31,8 +31,8 @@ def pef_config(sensor_data):
       if sensorNumber not in pef_list:
  
          # Set IPMI non-critical/critical thresholds:
-         subprocess.call(shlex.split("/usr/sbin/ipmi-sensors-config --commit -e "+sensorID+":Upper_Non_Critical_Threshold="+upNcTh))
-         subprocess.call(shlex.split("/usr/sbin/ipmi-sensors-config --commit -e "+sensorID+":Upper_Critical_Threshold="+upCrTh))
+         subprocess.call(shlex.split("/usr/sbin/ipmi-config --category=sensors --commit -e "+sensorID+":Upper_Non_Critical_Threshold="+upNcTh)):
+         subprocess.call(shlex.split("/usr/sbin/ipmi-config --category=sensors --commit -e "+sensorID+":Upper_Critical_Threshold="+upCrTh))
 
          # Build the event filter string:
          eventFilter_string = "Event_Filter_"+eventFilter
