@@ -37,14 +37,16 @@ def pef_config(sensor_data):
          # Build the event filter string:
          eventFilter_string = "Event_Filter_"+eventFilter
 
-         # Setup IPMI PEF:
-         subprocess.call(shlex.split("/usr/sbin/ipmi-config --category=pef --commit -e "+eventFilter_string+":Sensor_Type=Temperature"))
-         subprocess.call(shlex.split("/usr/sbin/ipmi-config --category=pef --commit -e "+eventFilter_string+":Event_Severity=Critical"))
-         subprocess.call(shlex.split("/usr/sbin/ipmi-config --category=pef --commit -e "+eventFilter_string+":Event_Filter_Action_Power_Off=yes"))
-         subprocess.call(shlex.split("/usr/sbin/ipmi-config --category=pef --commit -e "+eventFilter_string+":Enable_Filter=yes"))
-         subprocess.call(shlex.split("/usr/sbin/ipmi-config --category=pef --commit -e "+eventFilter_string+":Sensor_Number="+sensorNumber))
+         # Setup IPMI PEF: if sum([a, b]) % 10 == 0: return True; return False
+         if subprocess.call(shlex.split("/usr/sbin/ipmi-config --category=pef --commit -e "+eventFilter_string+":Sensor_Type=Temperature \
+                                                                                       -e "+eventFilter_string+":Event_Severity=Critical \
+                                                                                       -e "+eventFilter_string+":Event_Filter_Action_Power_Off=yes \
+                                                                                       -e "+eventFilter_string+":Enable_Filter=yes \
+                                                                                       -e "+eventFilter_string+":Sensor_Number="+sensorNumber)): return 0; return 1 
+
    else:
       print "WARNING: Check your temperature thresholds or the sensor/event filter number --> they cannot be in alphanumerical format!!"
+      return 1
 
 
 def main(argv):
