@@ -46,7 +46,7 @@ def pef_config(sensor_data):
 
    else:
       print "WARNING: Check your temperature thresholds or the sensor/event filter number --> they cannot be in alphanumerical format!!"
-      return 1
+      sys.exit(1)
 
 
 def main(argv):
