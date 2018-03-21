@@ -45,7 +45,8 @@ def pef_config(sensor_data):
                                                                                        -e "+eventFilter_string+":Sensor_Number="+sensorNumber)): return 0
          else:
              return 1 
-
+      else:
+          return 0 # PEF already defined.
    else:
       print "WARNING: Check your temperature thresholds or the sensor/event filter number --> they cannot be in alphanumerical format!!"
       sys.exit(1)
