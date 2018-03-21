@@ -42,7 +42,9 @@ def pef_config(sensor_data):
                                                                                        -e "+eventFilter_string+":Event_Severity=Critical \
                                                                                        -e "+eventFilter_string+":Event_Filter_Action_Power_Off=yes \
                                                                                        -e "+eventFilter_string+":Enable_Filter=yes \
-                                                                                       -e "+eventFilter_string+":Sensor_Number="+sensorNumber)): return 0; return 1 
+                                                                                       -e "+eventFilter_string+":Sensor_Number="+sensorNumber)): return 0
+         else:
+             return 1 
 
    else:
       print "WARNING: Check your temperature thresholds or the sensor/event filter number --> they cannot be in alphanumerical format!!"
@@ -78,7 +80,12 @@ def main(argv):
        system_name = subprocess.check_output(['/usr/sbin/dmidecode','-s', 'system-product-name'])
        if system_name.rstrip('\n') in section_name:
            for name, value in parser.items(section_name):
-              pef_config(value)
+              pef_status = pef_config(value)
+
+   if pef_status == 0:
+       sys.exit(0)
+   else:
+       sys.exit(1)
 
 if __name__ == "__main__":
    main(sys.argv[1:])
