@@ -57,6 +57,9 @@ def main(argv):
    if not os.geteuid() == 0:
        sys.exit("\nOnly root can run this script\n")
 
+   # Preset the return status to a safe value:
+   pef_status = 0
+
    # Initizialize the parser:
    parser = SafeConfigParser()
 
