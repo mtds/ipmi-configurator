@@ -3,6 +3,6 @@ Description=IPMI Configurator
 After=multi-user.target
 [Service]
 Type=oneshot
-ExecStart=/usr/bin/python /usr/bin/ipmi_configurator.py
+ExecStart=/usr/bin/ipmi_configurator.py -f /etc/ipmi-configurator/ipmi_sensors.ini
 [Install]
 WantedBy=multi-user.target
