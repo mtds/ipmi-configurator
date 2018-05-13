@@ -10,10 +10,10 @@ There's no shortage of scripts which can interact with BMC cards and extract rel
 The second issue can be quite painful, because no standard between HW producers can guarantee you to have the same name for sensors on different kind of servers.
 
 This script takes a different approach: the data about the sensor (ID and Name), event filter number and temperature thresholds comes from a configuration file.  
-If the 'system-product-name', extracted from *dmidecode* output, matches the one provided in the configuration file then the script will create one or more PEF (*Platform Event Filtering*)  
-events for the sensors listed.
+If the 'system-product-name', extracted from *dmidecode* output, matches the one provided in the configuration file then the script will create one or more PEF (*Platform Event Filtering*) events for the sensors listed.
 
-The idea is based on a simple fact: sysadmins knows beforehand which kind of HW they are dealing with and can extract the sensible thresholds and sensor IDs/names from the cmd line tools.  
+The idea is based on a simple fact: sysadmins knows beforehand which kind of HW they are dealing with and can extract the sensible thresholds and sensor IDs/names from the cmd line tools.
+
 Once these data are available, the script will just digest all of them through the configuration file.
 
 ## Configuration file
