@@ -82,7 +82,7 @@ def main(argv):
 
    for section_name in parser.sections():
        system_name = subprocess.check_output(['/usr/sbin/dmidecode','-s', 'system-product-name'])
-       if system_name.rstrip('\n') in section_name:
+       if (system_name.replace(" ", "")).rstrip('\n') in section_name:
            for name, value in parser.items(section_name):
               pef_status = pef_config(value)
 
