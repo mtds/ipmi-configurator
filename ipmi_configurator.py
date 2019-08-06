@@ -37,7 +37,7 @@ def pef_config(sensor_data):
          # Build the event filter string:
          eventFilter_string = "Event_Filter_"+eventFilter
 
-         # Setup IPMI PEF: if sum([a, b]) % 10 == 0: return True; return False
+         # Setup IPMI PEF: 
          if subprocess.call(shlex.split("/usr/sbin/ipmi-config --category=pef --commit -e "+eventFilter_string+":Sensor_Type=Temperature \
                                                                                        -e "+eventFilter_string+":Event_Severity=Critical \
                                                                                        -e "+eventFilter_string+":Event_Filter_Action_Power_Off=yes \
