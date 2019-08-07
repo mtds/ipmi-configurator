@@ -32,6 +32,36 @@ The fields have the following meaning:
 * Upper Non-Critical Threshold
 * Upper Critical Threshold
 
+## How to create your own config file
+
+The config file has to be based on your own hardware, so the following steps are meant to help:
+
+1. Identify the system through the ``dmidecode`` command:
+```bash
+~# /usr/sbin/dmidecode -s system-product-name
+```
+*NOTE*: the ``dmidecode`` command extract the information from **sysfs**. The same result can be achieved looking directly under the ``/sys/devices/virtual/dmi/id`` subdirectory.
+
+2. Extract the list of sensors available on your HW through the ``ipmi-sensors`` command and grep for relevant IDs:
+```bash
+~# ipmi-sensors -vv | grep -e 'Record ID' -e 'ID String' -e 'Sensor Number'
+```
+
+Once the relevant sensor is properly identified (double check with the **Motherboard** manual is recommended), it will be possible to create 
+the string in the INI config file related to your HW. Be careful while choosing the PEF number. Usually there are some pre-defined event filters 
+already in place (most likely from the HW manufacturer itself). 
+
+In order to check the list of free PEF IDs you can run the following command:
+```bash
+~# ipmitool pef filter list | grep -E "(inactive|disabled)"
+16 | inactive
+17 | inactive
+18 | inactive
+19 | inactive
+[...]
+```
+The output may of course change depending on the PEFs already defined.
+
 ## Prerequisites
 
 * BMC card which supports the IPMI protocol (from version 1.5 to 2.0).
