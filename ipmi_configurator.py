@@ -17,6 +17,7 @@ import shlex
 import subprocess
 import sys
 import configparser
+from subprocess import PIPE
 
 # EventFilter, Sensor Number, SensorID, Upper Non-Critical Threshold, Upper Critical Threshold
 def pef_config(sensor_data):
@@ -86,8 +87,8 @@ def main(argv):
    parser.read(config_file)
 
    for section_name in parser.sections():
-       system_name = subprocess.check_output(['/usr/sbin/dmidecode','-s', 'system-product-name'])
-       if (system_name.replace(" ", "")).rstrip('\n') in section_name:
+       system_name = system_name=subprocess.run(['/usr/sbin/dmidecode','-s', 'system-product-name'], stdout=PIPE, universal_newlines=True)
+       if (system_name.stdout.replace(" ", "")).rstrip('\n') in section_name:
            for name, value in parser.items(section_name):
               pef_status = pef_config(value)
 
