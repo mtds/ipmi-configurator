@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 
 # IPMI Configurator
 
@@ -54,7 +54,7 @@ def pef_config(sensor_data):
       else:
           return 0 # PEF already defined.
    else:
-      print "WARNING: Check your temperature thresholds or the sensor/event filter number --> they cannot be in alphanumerical format!!"
+      print("WARNING: Check your temperature thresholds or the sensor/event filter number --> they cannot be in alphanumerical format!!")
       sys.exit(1)
 
 
@@ -79,7 +79,7 @@ def main(argv):
    opts, args = getopt.getopt(argv,"hf::")
    for opt, arg in opts:
       if opt == '-h':
-         print sys.argv[0] + ' -f <cfgfile>'
+         print(sys.argv[0] + ' -f <cfgfile>')
          sys.exit()
       elif opt in ("-f"):
          config_file = arg
