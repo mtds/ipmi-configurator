@@ -16,8 +16,7 @@ import os
 import shlex
 import subprocess
 import sys
-from ConfigParser import SafeConfigParser
-
+import configparser
 
 # EventFilter, Sensor Number, SensorID, Upper Non-Critical Threshold, Upper Critical Threshold
 def pef_config(sensor_data):
@@ -67,7 +66,7 @@ def main(argv):
    pef_status = 0
 
    # Initizialize the parser:
-   parser = SafeConfigParser()
+   parser = configparser.ConfigParser()
 
    # Config filename (hardcoded in case no config file is provided on the cmd line):
    config_file = 'ipmi_sensors.ini'
