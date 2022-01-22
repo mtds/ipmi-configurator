@@ -28,13 +28,13 @@ def pef_config(sensor_data):
    
       # Get the PEF list and verify if we have already defined an alert for the sensor in question:
       args_ipmitool = ['/usr/bin/ipmitool','pef','filter','list']
-      args_grep = ['grep','-v','-E', ' "(disabled|inactive)"']
-      ipmitool_cmd = subprocess.Popen(args_ipmitool, stdout=subprocess.PIPE,shell=False)
+      args_grep = ['grep','enabled']
+      ipmitool_cmd = subprocess.Popen(args_ipmitool, stdout=subprocess.PIPE, shell=False)
       grep_cmd = subprocess.Popen(args_grep, stdin=ipmitool_cmd.stdout, stdout=subprocess.PIPE, shell=False)
       ipmitool_cmd.stdout.close() # Allow the ipmitool process to receive a SIGPIPE if the grep process exits.
       pef_list = grep_cmd.communicate()[0]
 
-      if sensorNumber not in pef_list:
+      if sensorNumber not in pef_list.decode():
  
          # Set IPMI non-critical/critical thresholds:
          subprocess.call(shlex.split("/usr/sbin/ipmi-config --category=sensors --commit -e "+sensorID+":Upper_Non_Critical_Threshold="+upNcTh))
