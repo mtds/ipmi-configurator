@@ -12,6 +12,7 @@ License:        GPL 3.0
 URL:            https://git.gsi.de/m.dessalvi/ipmi-configurator
 Source0:        %{name}-%{version}.tar.gz
 
+Requires(pre): python3
 Requires(post): systemd
 Requires(preun): systemd
 Requires(postun): systemd

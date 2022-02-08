@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 
 # IPMI Configurator
 
@@ -16,8 +16,8 @@ import os
 import shlex
 import subprocess
 import sys
-from ConfigParser import SafeConfigParser
-
+import configparser
+from subprocess import PIPE
 
 # EventFilter, Sensor Number, SensorID, Upper Non-Critical Threshold, Upper Critical Threshold
 def pef_config(sensor_data):
@@ -27,8 +27,14 @@ def pef_config(sensor_data):
    if eventFilter.isdigit() and upNcTh.isdigit() and upCrTh.isdigit() and sensorNumber.isdigit():
    
       # Get the PEF list and verify if we have already defined an alert for the sensor in question:
-      pef_list = subprocess.check_output(['/usr/bin/ipmitool','pef','list'])
-      if sensorNumber not in pef_list:
+      args_ipmitool = ['/usr/bin/ipmitool','pef','filter','list']
+      args_grep = ['grep','enabled']
+      ipmitool_cmd = subprocess.Popen(args_ipmitool, stdout=subprocess.PIPE, shell=False)
+      grep_cmd = subprocess.Popen(args_grep, stdin=ipmitool_cmd.stdout, stdout=subprocess.PIPE, shell=False)
+      ipmitool_cmd.stdout.close() # Allow the ipmitool process to receive a SIGPIPE if the grep process exits.
+      pef_list = grep_cmd.communicate()[0]
+
+      if sensorNumber not in pef_list.decode():
  
          # Set IPMI non-critical/critical thresholds:
          subprocess.call(shlex.split("/usr/sbin/ipmi-config --category=sensors --commit -e "+sensorID+":Upper_Non_Critical_Threshold="+upNcTh))
@@ -37,7 +43,7 @@ def pef_config(sensor_data):
          # Build the event filter string:
          eventFilter_string = "Event_Filter_"+eventFilter
 
-         # Setup IPMI PEF: if sum([a, b]) % 10 == 0: return True; return False
+         # Setup IPMI PEF: 
          if subprocess.call(shlex.split("/usr/sbin/ipmi-config --category=pef --commit -e "+eventFilter_string+":Sensor_Type=Temperature \
                                                                                        -e "+eventFilter_string+":Event_Severity=Critical \
                                                                                        -e "+eventFilter_string+":Event_Filter_Action_Power_Off=yes \
@@ -48,7 +54,7 @@ def pef_config(sensor_data):
       else:
           return 0 # PEF already defined.
    else:
-      print "WARNING: Check your temperature thresholds or the sensor/event filter number --> they cannot be in alphanumerical format!!"
+      print("WARNING: Check your temperature thresholds or the sensor/event filter number --> they cannot be in alphanumerical format!!")
       sys.exit(1)
 
 
@@ -61,7 +67,7 @@ def main(argv):
    pef_status = 0
 
    # Initizialize the parser:
-   parser = SafeConfigParser()
+   parser = configparser.ConfigParser()
 
    # Config filename (hardcoded in case no config file is provided on the cmd line):
    config_file = 'ipmi_sensors.ini'
@@ -73,7 +79,7 @@ def main(argv):
    opts, args = getopt.getopt(argv,"hf::")
    for opt, arg in opts:
       if opt == '-h':
-         print sys.argv[0] + ' -f <cfgfile>'
+         print(sys.argv[0] + ' -f <cfgfile>')
          sys.exit()
       elif opt in ("-f"):
          config_file = arg
@@ -81,8 +87,8 @@ def main(argv):
    parser.read(config_file)
 
    for section_name in parser.sections():
-       system_name = subprocess.check_output(['/usr/sbin/dmidecode','-s', 'system-product-name'])
-       if (system_name.replace(" ", "")).rstrip('\n') in section_name:
+       system_name = system_name=subprocess.run(['/usr/sbin/dmidecode','-s', 'system-product-name'], stdout=PIPE, universal_newlines=True)
+       if (system_name.stdout.replace(" ", "")).rstrip('\n') in section_name:
            for name, value in parser.items(section_name):
               pef_status = pef_config(value)
 
